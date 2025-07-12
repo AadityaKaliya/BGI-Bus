@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <title>BGI BUS TRACKER</title>
+  <style>
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+    #info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 1000;
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+
+<div id="info">
+</div>
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+  const map = L.map('map').setView([22.6196, 75.7585], 15);
+
+  // Load and display tile layer
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
+
+  // Initial bus location
+  let busLat = 22.6196;
+  let busLng = 75.7585;
+
+  // Create a marker for the bus
+  let busMarker = L.marker([busLat, busLng], { title: "Sushila Devi Bansal college,Indore" }).addTo(map);
+
+  // Simulated API call to update location
+ async function getUpdatedBusLocation() {
+  const response = await fetch("https://your-api.com/bus-location");
+  const data = await response.json();
+  return { lat: data.latitude, lng: data.longitude };
+}
+
+
+  // Update bus location every 3 seconds
+  setInterval(() => {
+    const newLocation = getUpdatedBusLocation();
+    busMarker.setLatLng([newLocation.lat, newLocation.lng]);
+    map.panTo([newLocation.lat, newLocation.lng]);
+  }, 3000);
+</script>
+
+</body>
+
+</html>
